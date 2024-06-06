@@ -9,7 +9,7 @@ os.makedirs('slurm', exist_ok=True)
 # Read the sample sheet
 sample_sheet = pd.read_csv(config["sample_sheet"], sep="\t")
 sample_sheet['sample_name'] = [re.sub("_1.fastq.gz",'', os.path.basename(x)) for x in sample_sheet.fastq_1]
-print(sample_sheet)
+
 
 rule all:
     input:
@@ -46,7 +46,7 @@ rule trim_galore:
         fastq2="trim_galore/{sample_name}_2_val_2.fq.gz",
     shell:
         r"""
-        trim_galore --phred64 --paired --output_dir trim_galore {input.fastq1} {input.fastq2}   
+        trim_galore --phred33 --paired --output_dir trim_galore {input.fastq1} {input.fastq2}   
         """
 
 rule reference_genome:
@@ -67,7 +67,9 @@ rule hisat_alignment:
         fastq2="trim_galore/{sample_name}_2_val_2.fq.gz",
         index="reference/schistosoma_mansoni.PRJEA36577.WBPS19.genomic_softmasked_index.1.ht2"
     output:
-        bam="hisat2_alignment/{sample_name}.bam"
+        bam="hisat2_alignment/{sample_name}.bam",
+    resources:
+        mem='20G',
     threads: 4
     shell:
         r"""
