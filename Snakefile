@@ -34,7 +34,7 @@ rule all:
         "repeatmasker/transcripts.5k.withgffread.fa.tbl",
         "repeatmasker/transcripts.5k.withgffread.fa.masked",
         "repeatmasker/transcripts.5k.withgffread.fa.out.gff",
-        "filter/filter_transcript.gtf"
+        "filter/final_filtered_transcripts.gtf"
 
 rule fastqc:
     input:
@@ -265,9 +265,9 @@ rule repeatmasker:
 rule filter_gff:
     input:
         bed_file="transdecoder/transcripts.5k.withgffread.fa.transdecoder_dir/transcripts.5k.withgffread.fa.transdecoder.bed",
-        gff_file="transdecoder/transcripts.5k.withgffread.fa.transdecoder_dir/transcripts.5k.withgffread.fa.transdecoder.gff3"
+        gff_file="/mnt/data/project0014/Sreya/ncrna/output_results/merged_stringtie_scallop/merged.scallop.stringtie.5k.gtf"
     output:
-        filtered_gff="filter/filter_transcript.gtf"
+        filtered_gff="filter/final_filtered_transcripts.gtf"
     script:
         "filter.R"
 
