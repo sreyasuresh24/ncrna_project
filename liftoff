@@ -1,0 +1,1 @@
+liftoff /mnt/data/project0014/Sreya/ncrna/output_results/reference/schistosoma_mansoni.PRJEA36577.WBPS19.genomic_softmasked.fa /mnt/data/project0014/Sreya/ncrna/liftofff/schistosoma_mansoni.PRJEA36577.WBPS14.genomic.fa -o maciel_test_lifted.gff -u maciel_test_unmapped_features.txt -polish -f feature_types_to_lift.txt -g macielEtAl2019.gff
