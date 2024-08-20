@@ -1,1 +1,2 @@
+gffcompare -r /mnt/data/project0014/Sreya/ncrna/output_results/filter/final_filtered_transcripts.gtf -o comparison_results /mnt/data/project0014/Sreya/ncrna/liftofff/maciel_test_lifted.gff_polished
 
