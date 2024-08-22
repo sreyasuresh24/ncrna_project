@@ -32,8 +32,6 @@ library(reticulate)
 py_config()  # Check that the correct Python environment is being used
 
 
-
-
 st <- format(Sys.time(), "%Y-%m-%d")
 st
 sampleS1.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS1')
