@@ -1,0 +1,911 @@
+install.packages("Matrix")
+# Function to check, install, and load packages
+load_library <- function(pkg) {
+  new_package <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+  if (length(new_package)) install.packages(new_package, dependencies = TRUE, Ncpus = 6)
+  invisible(sapply(pkg, library, character.only = TRUE))
+  message("The following packages are now loaded")
+  print(names(sessionInfo()$otherPkgs))
+}
+
+# List of packages to load
+packages <- c('tidyverse', 'Seurat', 'RColorBrewer', 'patchwork', 'clustree', 'BiocParallel', 'SingleCellExperiment', 'scDblFinder')
+load_library(packages)
+install.packages(c("Matrix", "ggplot2", "dplyr", "data.table", "Rcpp", "Rtsne", "umap", "future", "curl", "digest"))
+install.packages("Seurat")
+library(Seurat)
+install.packages("reticulate")
+library(reticulate)
+use_python("C:/Users/sreya/Downloads/python-3.12.4-amd64.exe")  # Adjust path as necessary
+
+library(reticulate)
+
+# Use the path to the Python interpreter, not the installer
+use_python("C:/Users/sreya/AppData/Local/Programs/Python/Python312/python.exe")
+
+# Check Python configuration
+py_config()
+install.packages("Seurat")
+library(Seurat)
+
+library(reticulate)
+py_config()  # Check that the correct Python environment is being used
+
+
+
+
+st <- format(Sys.time(), "%Y-%m-%d")
+st
+sampleS1.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS1')
+sampleS2.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS2/')
+sampleS3.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS3/')
+sampleS4.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS4/')
+sampleS5.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS5/')
+sampleS6.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS6/')
+sampleS7.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS7/')
+sampleS8.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS8/')
+sampleS9.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS9/')
+sampleS10.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS10/')
+sampleS11.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS11/')
+sampleS12.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS12/')
+
+
+sampleS1 <- CreateSeuratObject(counts = sampleS1.data, project = "sampleS1", min.cells = 3, min.features = 300)
+sampleS2 <- CreateSeuratObject(counts = sampleS2.data, project = "sampleS2", min.cells = 3, min.features = 300)
+sampleS3 <- CreateSeuratObject(counts = sampleS3.data, project = "sampleS3", min.cells = 3, min.features = 300)
+sampleS4 <- CreateSeuratObject(counts = sampleS4.data, project = "sampleS4", min.cells = 3, min.features = 300)
+sampleS5 <- CreateSeuratObject(counts = sampleS5.data, project = "sampleS5", min.cells = 3, min.features = 300)
+sampleS6 <- CreateSeuratObject(counts = sampleS6.data, project = "sampleS6", min.cells = 3, min.features = 300)
+sampleS7 <- CreateSeuratObject(counts = sampleS7.data, project = "sampleS7", min.cells = 3, min.features = 300)
+sampleS8 <- CreateSeuratObject(counts = sampleS8.data, project = "sampleS8", min.cells = 3, min.features = 300)
+sampleS9 <- CreateSeuratObject(counts = sampleS9.data, project = "sampleS9", min.cells = 3, min.features = 300)
+sampleS10 <- CreateSeuratObject(counts = sampleS10.data, project = "sampleS10", min.cells = 3, min.features = 300)
+sampleS11 <- CreateSeuratObject(counts = sampleS11.data, project = "sampleS11", min.cells = 3, min.features = 300)
+sampleS12 <- CreateSeuratObject(counts = sampleS12.data, project = "sampleS12", min.cells = 3, min.features = 300)
+
+# Merge samples into one Seurat object
+sm2_all <- merge(sampleS1, y = list(sampleS2, sampleS3, sampleS4, sampleS5, sampleS6, sampleS7, sampleS8, sampleS9, sampleS10, sampleS11, sampleS12),
+                add.cell.ids = c("sampleS1", "sampleS2", "sampleS3", "sampleS4", "sampleS5", "sampleS6", "sampleS7", "sampleS8", "sampleS9", "sampleS10", "sampleS11", "sampleS12"),
+                project = "sm2_all")
+# Save your Seurat object to an RDS file
+saveRDS(sm2_all, file = "sm2_all_seurat_object.rds")
+
+sample1.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix1/')
+sample2.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix2/')
+sample3.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix3/')
+sample4.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix4/')
+sample5.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix5/')
+sample6.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix6/')
+sample7.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix7/')
+sample8.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix8/')
+sample9.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix9/')
+sample10.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix10/')
+sample11.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix11/')
+sample12.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix12/')
+
+
+sample1 <- CreateSeuratObject(counts = sample1.data, project = "sample1", min.cells = 3, min.features = 300)
+sample2 <- CreateSeuratObject(counts = sample2.data, project = "sample2", min.cells = 3, min.features = 300)
+sample3 <- CreateSeuratObject(counts = sample3.data, project = "sample3", min.cells = 3, min.features = 300)
+sample4 <- CreateSeuratObject(counts = sample4.data, project = "sample4", min.cells = 3, min.features = 300)
+sample5 <- CreateSeuratObject(counts = sample5.data, project = "sample5", min.cells = 3, min.features = 300)
+sample6 <- CreateSeuratObject(counts = sample6.data, project = "sample6", min.cells = 3, min.features = 300)
+sample7 <- CreateSeuratObject(counts = sample7.data, project = "sample7", min.cells = 3, min.features = 300)
+sample8 <- CreateSeuratObject(counts = sample8.data, project = "sample8", min.cells = 3, min.features = 300)
+sample9 <- CreateSeuratObject(counts = sample9.data, project = "sample9", min.cells = 3, min.features = 300)
+sample10 <- CreateSeuratObject(counts = sample10.data, project = "sample10", min.cells = 3, min.features = 300)
+sample11 <- CreateSeuratObject(counts = sample11.data, project = "sample11", min.cells = 3, min.features = 300)
+sample12 <- CreateSeuratObject(counts = sample12.data, project = "sample12", min.cells = 3, min.features = 300)
+
+# Merge samples into one Seurat object
+sm_all <- merge(sample1, y = list(sample2, sample3, sample4, sample5, sample6, sample7, sample8, sample9, sample10, sample11, sample12),
+                add.cell.ids = c("sample1", "sample2", "sample3", "sample4", "sample5", "sample6", "sample7", "sample8", "sample9", "sample10", "sample11", "sample12"),
+                project = "sm_all")
+
+
+print(sm2_all)
+
+sm2_all <- NormalizeData(sm2_all)
+head(sm2_all@meta.data)
+head(VariableFeatures(sm2_all))
+names(sm2_all@assays)
+DefaultAssay(sm2_all)
+DefaultAssay(sm2_all) <- "RNA"
+default_assay <- DefaultAssay(sm2_all)
+print(default_assay)
+if (default_assay != "RNA") {
+  DefaultAssay(sm2_all) <- "RNA"
+}
+print(names(sm2_all@assays))
+# List all assays
+print(names(sm2_all@assays))
+
+# Print details of the default assay
+print(sm2_all@assays[[DefaultAssay(sm2_all)]])
+
+# If there are multiple layers in the default assay, check how many layers there are
+if ("layer" %in% names(sm2_all@assays[[DefaultAssay(sm2_all)]])) {
+  print(length(sm2_all@assays[[DefaultAssay(sm2_all)]]$layer))
+}
+
+# Set the default assay to "RNA" or the appropriate one
+DefaultAssay(sm2_all) <- "RNA"
+library(SingleCellExperiment)
+
+
+
+# For mouse datasets, mitochondrial genes typically start with "mt-"
+sm2_all[["percent.mt"]] <- PercentageFeatureSet(sm2_all, pattern = "ERR11178413-gene.20551.8")
+sm2_all[["percent.mt"]] <- PercentageFeatureSet(sm2_all, pattern = "Smp-9")
+VlnPlot(sm2_all, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+sm_all[["percent.mt"]] <- PercentageFeatureSet(sm2_all, pattern = "ERR11178413-gene.20551.8")
+sm_all[["percent.mt"]] <- PercentageFeatureSet(sm_all, pattern = "Smp-9")
+VlnPlot(sm2_all, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+
+plot1 <- FeatureScatter(sm2_all, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot2 <- FeatureScatter(sm2_all, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+plot1 + plot2
+
+#normalisation
+sm2_all <- NormalizeData(sm2_all, normalization.method = "LogNormalize", scale.factor = 10000)
+sm2_all <- NormalizeData(sm2_all)
+sm_all <- NormalizeData(sm_all, normalization.method = "LogNormalize", scale.factor = 10000)
+sm_all <- NormalizeData(sm_all)
+
+
+sm2_all <- FindVariableFeatures(sm2_all, selection.method = "vst", nfeatures = 2000)
+sm2_all <- RunPCA(sm2_all, features = VariableFeatures(object = sm2_all),npcs = 100)
+sm_all <- FindVariableFeatures(sm_all, selection.method = "vst", nfeatures = 2000)
+sm_all <- RunPCA(sm_all, features = VariableFeatures(object = sm_all),npcs = 100)
+# Identify the 10 most highly variable genes
+top10 <- head(VariableFeatures(sm2_all), 10)
+
+# plot variable features with and without labels
+plot1 <- VariableFeaturePlot(sm2_all)
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+plot1 + plot2
+
+all.genes2 <- rownames(sm2_all)
+sm2_all <- ScaleData(sm2_all, features = all.genes2)
+
+all.genes <- rownames(sm_all)
+sm_all <- ScaleData(sm_all, features = all.genes)
+
+# Examine and visualize PCA results a few different ways
+print(sm2_all[["pca"]], dims = 1:5, nfeatures = 5)
+
+VizDimLoadings(sm2_all, dims = 1:2, reduction = "pca")
+
+DimPlot(sm2_all, reduction = "pca") + NoLegend()
+
+DimHeatmap(sm2_all, dims = 1, cells = 500, balanced = TRUE)
+
+DimHeatmap(sm2_all, dims = 1:15, cells = 500, balanced = TRUE)
+
+ElbowPlot(sm2_all)
+
+
+sm2_all <- FindNeighbors(sm2_all, dims = 1:10)
+sm2_all <- FindClusters(sm2_all, resolution = 0.5)
+
+sm_all <- FindNeighbors(sm_all, dims = 1:10)
+sm_all <- FindClusters(sm_all, resolution = 0.5)
+
+# Look at cluster IDs of the first 5 cells
+head(Idents(sm2_all), 5)
+
+
+#non-linear
+sm2_all <- RunUMAP(sm2_all, dims = 1:10)
+sm_all <- RunUMAP(sm_all, dims = 1:10)
+
+
+# note that you can set `label = TRUE` or use the LabelClusters function to help label
+# individual clusters
+DimPlot(sm2_all, reduction = "umap")
+DimPlot(sm_all , reduction = "umap")
+table(Idents(sm2_all))
+sm2_all <- FindClusters(sm2_all, resolution = 0.5)
+sm_all <- FindClusters(sm_all, resolution = 0.5)
+sm2_all <- JoinLayers(sm2_all)
+sm_all <- JoinLayers(sm_all)
+
+
+sm2_all <- FindNeighbors(sm2_all, dims = 1:10)
+sm_all <- FindNeighbors(sm_all, dims = 1:10)# Adjust number of PCs if needed
+
+# UMAP
+sm2_all <- RunUMAP(sm2_all, dims = 1:10)
+sm_all <- RunUMAP(sm_all, dims = 1:10)
+
+# Visualize UMAP and Clusters
+DimPlot(sm2_all, reduction = "umap")
+# find all markers of cluster 2
+sm2_all.markers_roc_cluster0 <- FindMarkers(sm2_all, ident.1 = 0, only.pos = TRUE, min.pct = 0.0, logfc.threshold = 0.0, test.use = "roc")
+head(sm2_all.markers_roc_cluster0, n = 5)
+
+# find markers for every cluster compared to all remaining cells, report only the positive
+# ones
+sm2_all.markers <- FindAllMarkers(sm2_all, only.pos = TRUE)
+sm2_all.markers %>%
+  group_by(cluster) %>%
+  dplyr::filter(avg_log2FC > 1)
+
+sm_all.markers <- FindAllMarkers(sm_all, only.pos = TRUE)
+sm_all.markers %>%
+  group_by(cluster) %>%
+  dplyr::filter(avg_log2FC > 1)
+
+
+sm2_all <- RunPCA(sm2_all, features = filtered_variable_features, npcs = 100)
+
+#shows the weightings of top contributing features to pcs 1 and 2
+VizDimLoadings(sm2_all, dims = 1:2, reduction = "pca") 
+#plots heatmap of top 500 mist variable cells for PC1, with relative gene expression
+DimHeatmap(sm2_all, dims = 1, cells = 500, balanced = TRUE) 
+
+#jactstraw
+DefaultAssay(sm2_all) <- "RNA"
+available_features <- rownames(sm2_all)
+print(available_features)
+sm2_all.markers <- FindAllMarkers(sm2_all, only.pos = TRUE)
+#clusters
+#here construct k-nearst neighbours graoh based on euclidean distance in PCA space, then refine edge weights based on Jaccard similarity. this takes the number of PCs previously determined as important (here 40 PCs_)
+sm2_all <- FindNeighbors(sm2_all, dims = 1:40) 
+#this iteratively groups cells using Louvain algorithm (default). Resolution sets the granularity. 0.4-1.2 gives good results for ~3K cells, with larger number suiting larger datasets.
+sm2_all <- FindClusters(sm2_all, resolution = 0.5) 
+#runs umap to visualise the clusters. Need to set the number of PCs
+sm2_all <- RunUMAP(sm2_all, dims = 1:40) 
+#visulaises the UMAP
+DimPlot(sm2_all, reduction = "umap") 
+ggsave("day2somules_v10clust_40PC_0.4res_RNA.pdf")
+
+# Find markers for every cluster
+sm2_all.markers <- FindAllMarkers(sm2_all, only.pos = TRUE, min.pct = 0.1, logfc.threshold = 0.25)
+
+# View the top markers for each cluster
+top_markers_sm_all <- sm_all.markers %>%
+  group_by(cluster) %>%
+  arrange(cluster, desc(avg_log2FC)) %>%
+  slice_head(n = 10) # Top 10 markers
+top_genes <- unique(top_markers_sm_all$gene)
+
+# Plot expression of top markers
+FeaturePlot(sm_all, features = top_genes, ncol = 3)
+
+top_markers <- sm2_all.markers %>%
+  group_by(cluster) %>%
+  arrange(cluster, desc(avg_log2FC)) %>%
+  slice_head(n = 10)
+top_genes1 <- unique(top_markers)
+# Plot expression of top markers
+FeaturePlot(sm_all, features = top_genes, ncol = 3)
+# Plot expression of top markers
+FeaturePlot(sm2_all, features = top_genes, ncol = 3)
+
+umap_plot <- FeaturePlot(sm_all, features = top_genes, ncol = 3)
+print(umap_plot)
+install.packages("BiocManager")
+BiocManager::install("clusterProfiler")
+
+# run sctransform
+sm2_all <- SCTransform(sm2_all, verbose = TRUE)
+FeaturePlot(sm2_all, features = "Smp-179320")
+VlnPlot(sm2_all, features = "Smp-179320")
+
+
+sm2_all <- RunPCA(sm2_all, features = VariableFeatures(object = sm2_all), npcs=100)
+VizDimLoadings(sm2_all, dims = 1:2, reduction = "pca") #shows the weightings of top contributing features to PCs 1 and 2
+DimHeatmap(sm2_all, dims = 1, cells = 500, balanced = TRUE) #plots heatmap of top 500 mist variable cells for PC1, with relative gene expression
+
+#clustering on sct
+#here construct k-nearest neighbours graph based on euclidean distance in PCA space, then refine edge weights based on Jaccard similarity. this takes the number of PCs previously determined as important (here 40 PCs_)
+sm2_all <- FindNeighbors(sm2_all, dims = 1:40) 
+#this iteratively groups cells using Louvain algorithm (default). Resolution sets the granularity. 0.4-1.2 gives good results for ~3K cells, with larger number suiting larger datasets.
+sm2_all <- FindClusters(sm2_all, resolution = 0.5) 
+#runs umap to visualise the clusters. Need to set the number of PCs
+sm2_all <- RunUMAP(sm2_all, dims = 1:40) 
+#visualises the UMAP
+DimPlot(sm2_all, reduction = "umap") 
+ggsave("day2somules_v10clust_40PC_0.4res_SCT.pdf")
+
+#plotting genes
+FeaturePlot(sm2_all, features = "Smp-179320")
+#ggsave(paste("day2somules-Smp-179320-",st, ".pdf", sep = ""), width = 25, height = 15, units = c('cm'))
+
+VlnPlot(sm2_all, features = "Smp-179320")
+#ggsave(paste("day2somules-Smp-179320-",st, ".pdf", sep = ""), width = 25, height = 15, units = c('cm'))
+
+save.image(file = "my_environment.RData")
+
+load("my_environment.RData")
+
+# Bioconductor packages
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+BiocManager::install(c("scDblFinder", "SingleCellExperiment", "BiocParallel"))
+
+library(dplyr)
+library(scDblFinder)
+library(SingleCellExperiment)
+library(BiocParallel)
+library(Matrix)
+
+# Quality control
+sm2_all[["percent.mt"]] <- PercentageFeatureSet(sm2_all, pattern = "Smp-9")
+VlnPlot(sm2_all, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+FeatureScatter(sm2_all, feature1 = "nCount_RNA", feature2 = "percent.mt") + FeatureScatter(sm2_all, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+
+# Normalization
+sm2_all <- NormalizeData(sm2_all, normalization.method = "LogNormalize", scale.factor = 10000)
+sm2_all <- FindVariableFeatures(sm2_all, selection.method = "vst", nfeatures = 2000)
+
+# Identify the 10 most highly variable genes
+top10 <- head(VariableFeatures(sm2_all), 10)
+VariableFeaturePlot(sm2_all) + LabelPoints(plot = VariableFeaturePlot(sm2_all), points = top10, repel = TRUE)
+
+# Scaling
+all.genes <- rownames(sm2_all)
+sm2_all <- ScaleData(sm2_all, features = all.genes)
+
+# PCA
+FeaturePlot(sm2_all, features = "ERR11178294-STRG.8253")
+sm2_all <- RunPCA(sm2_all, features = VariableFeatures(object = sm2_all),npcs = 100)
+VizDimLoadings(sm2_all, dims = 1:2, reduction = "pca")
+DimPlot(sm2_all, reduction = "pca") + NoLegend()
+ElbowPlot(sm2_all)
+
+# Clustering
+sm2_all <- FindNeighbors(sm2_all, dims = 1:10)
+sm2_all <- FindClusters(sm2_all, resolution = 0.5)
+head(Idents(sm2_all), 5)
+
+# UMAP
+sm2_all <- RunUMAP(sm2_all, dims = 1:10)
+FeaturePlot(sm2_all, features = "ERR11178294-STRG.8253")
+DimPlot(sm2_all, reduction = "umap")
+
+#Differential Expression Analysis
+sm2_all.markers <- FindAllMarkers(sm2_all, only.pos = TRUE)
+
+# Find markers for specific clusters (e.g., cluster 0)
+sm2_all.markers_roc_cluster0 <- FindMarkers(sm2_all, ident.1 = 0, only.pos = TRUE)
+
+# Display top markers
+head(sm2_all.markers_roc_cluster0, n = 5)
+# Differential expression analysis
+sm2_all.markers <- FindAllMarkers(sm2_all, only.pos = TRUE)
+sm2_all.markers %>%
+  group_by(cluster) %>%
+  dplyr::filter(avg_log2FC > 1)
+  View(sm2_all.markers)
+
+# Find markers for cluster 0
+sm2_all.markers_roc_cluster0 <- FindMarkers(sm2_all, ident.1 = 0, only.pos = TRUE, min.pct = 0.0, logfc.threshold = 0.0, test.use = "roc")
+head(sm2_all.markers_roc_cluster0, n = 5)
+
+# Plotting top contributing features for the PCs
+VizDimLoadings(sm2_all, dims = 1:2, reduction = "pca")
+DimHeatmap(sm2_all, dims = 1, cells = 500, balanced = TRUE)
+ElbowPlot(sm2_all, ndims = 50)
+all_features <- rownames(sm2_all)
+# Clustering and visualization with SCTransform normalization
+sm2_all <- SCTransform(sm2_all, verbose = TRUE)
+sm2_all <- RunPCA(sm2_all, features = VariableFeatures(object = sm2_all), npcs = 100)
+VizDimLoadings(sm2_all, dims = 1:2, reduction = "pca")
+DimHeatmap(sm2_all, dims = 1, cells = 500, balanced = TRUE)
+sm2_all <- FindNeighbors(sm2_all, dims = 1:40)
+sm2_all <- FindClusters(sm2_all, resolution = 0.5)
+sm2_all <- RunUMAP(sm2_all, dims = 1:40)
+DimPlot(sm2_all, reduction = "umap")
+
+# Plotting specific genes
+FeaturePlot(sm2_all, features = "ERR11178294-STRG.8253")
+
+write.csv(top_markers_sm_all, file = "topmarkers_sm_All")
+write.csv(top_markers, file = "topmarkers_sm2_All")
+DoHeatmap(sm2_all, features = top_markers$gene) + NoLegend()
+
+# Save environment
+save.image(file = "my_environment.RData")
+load("my_environment.RData")
+
+# Visualize QC metrics as a violin plot
+VlnPlot(sm_all, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+# For mouse datasets, mitochondrial genes typically start with "mt-"
+sm_all[["percent.mt"]] <- PercentageFeatureSet(sm_all, pattern = "Smp-9")
+VlnPlot(sm_all, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+
+
+plot1 <- FeatureScatter(sm_all, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot2 <- FeatureScatter(sm_all, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+plot1 + plot2
+
+#normalisation
+sm_all <- NormalizeData(sm_all, normalization.method = "LogNormalize", scale.factor = 10000)
+sm_all <- NormalizeData(sm_all)
+
+sm2_all <- NormalizeData(sm2_all, normalization.method = "LogNormalize", scale.factor = 10000)
+sm2_all <- NormalizeData(sm2_all)
+sm_all <- FindVariableFeatures(sm_all, selection.method = "vst", nfeatures = 2000)
+sm2_all <- FindVariableFeatures(sm2_all, selection.method = "vst", nfeatures = 2000)
+
+# Identify the 10 most highly variable genes
+top10 <- head(VariableFeatures(sm_all), 10)
+
+# plot variable features with and without labels
+plot1 <- VariableFeaturePlot(sm_all)
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+plot1 + plot2
+
+all.genes <- rownames(sm_all)
+sm_all <- ScaleData(sm_all, features = all.genes)
+sm2_all <- ScaleData(sm2_all, features = all.genes)
+
+sm2_all <- RunPCA(sm2_all, features = VariableFeatures(object = sm2_all),npcs = 100)
+sm_all <- RunPCA(sm_all, features = VariableFeatures(object = sm_all)(npcs = 100)
+
+
+# Examine and visualize PCA results a few different ways
+print(sm_all[["pca"]], dims = 1:5, nfeatures = 5)
+
+VizDimLoadings(sm_all, dims = 1:2, reduction = "pca")
+
+DimPlot(sm_all, reduction = "pca") + NoLegend()
+
+DimHeatmap(sm_all, dims = 1, cells = 500, balanced = TRUE)
+
+DimHeatmap(sm_all, dims = 1:15, cells = 500, balanced = TRUE)
+
+ElbowPlot(sm_all)
+
+
+sm_all <- FindNeighbors(sm_all, dims = 1:10)
+sm_all <- FindClusters(sm_all, resolution = 0.5)
+
+# Look at cluster IDs of the first 5 cells
+head(Idents(sm_all), 5)
+
+
+#non-linear
+sm_all <- RunUMAP(sm_all, dims = 1:10)
+
+# note that you can set label = TRUE or use the LabelClusters function to help label
+# individual clusters
+DimPlot(sm_all, reduction = "umap")
+table(Idents(sm_all))
+sm_all <- FindClusters(sm_all, resolution = 0.5)
+sm_all <- JoinLayers(sm_all)
+
+# find all markers of cluster 2
+sm_all.markers_roc_cluster0 <- FindMarkers(sm_all, ident.1 = 0, only.pos = TRUE, min.pct = 0.0, logfc.threshold = 0.0, test.use = "roc")
+head(sm_all.markers_roc_cluster0, n = 5)
+
+# find markers for every cluster compared to all remaining cells, report only the positive
+# ones
+sm_all.markers <- FindAllMarkers(sm_all, only.pos = TRUE)
+sm2_all.markers <- FindAllMarkers(sm2_all, only.pos = TRUE)
+sm_all.markers %>%
+  group_by(cluster) %>%
+  dplyr::filter(avg_log2FC > 1)
+
+
+#shows top contributing features for the PCs
+sm_all <- RunPCA(sm_all, features = VariableFeatures(object = sm_all),npcs = 100) 
+#shows the weightings of top contributing features to pcs 1 and 2
+VizDimLoadings(sm_all, dims = 1:2, reduction = "pca") 
+VizDimLoadings(sm2_all, dims = 1:2, reduction = "pca") 
+#plots heatmap of top 500 mist variable cells for PC1, with relative gene expression
+DimHeatmap(sm_all, dims = 1, cells = 500, balanced = TRUE) 
+DimHeatmap(sm2_all, dims = 1, cells = 500, balanced = TRUE) 
+#jactstraw
+DefaultAssay(sm_all) <- "RNA"
+
+
+
+ElbowPlot(sm_all, ndims = 100)  #ranks PCs by percentage of variation. A clear dropoff is sometimes seen, though not really here.
+ggsave("day2somules_v10_elbowplot100.pdf")
+
+#clusters
+#here construct k-nearst neighbours graoh based on euclidean distance in PCA space, then refine edge weights based on Jaccard similarity. this takes the number of PCs previously determined as important (here 40 PCs_)
+sm_all <- FindNeighbors(sm_all, dims = 1:40) 
+sm2_all <- FindNeighbors(sm2_all,dims = 1:40)
+#this iteratively groups cells using Louvain algorithm (default). Resolution sets the granularity. 0.4-1.2 gives good results for ~3K cells, with larger number suiting larger datasets.
+sm_all <- FindClusters(sm_all, resolution = 0.5)
+sm2_all <- FindClusters(sm2_all,resolution = 0.5)
+#runs umap to visualise the clusters. Need to set the number of PCs
+sm_all <- RunUMAP(sm_all, dims = 1:40)
+sm2_all <- RunUMAP(sm2_all, dims = 1:40)
+#visulaises the UMAP
+DimPlot(sm_all, reduction = "umap") 
+DimPlot(sm2_all,reduction = "umap")
+ggsave("day2somules_v10clust_40PC_0.4res_RNA.pdf")
+
+# run sctransform
+sm_all <- SCTransform(sm_all, verbose = TRUE)
+sm2_all <- SCTransform(sm2_all, verbose = TRUE)
+
+
+#plots heatmap of top 500 mist variable cells for PC1, with relative gene expression
+
+#clustering on sct
+#here construct k-nearest neighbours graph based on euclidean distance in PCA space, then refine edge weights based on Jaccard similarity. this takes the number of PCs previously determined as important (here 40 PCs_)
+sm_all <- FindNeighbors(sm_all, dims = 1:40) 
+#this iteratively groups cells using Louvain algorithm (default). Resolution sets the granularity. 0.4-1.2 gives good results for ~3K cells, with larger number suiting larger datasets.
+sm_all <- FindClusters(sm_all, resolution = 0.5) 
+#runs umap to visualise the clusters. Need to set the number of PCs
+sm_all <- RunUMAP(sm_all, dims = 1:40) 
+DimPlot(sm_all, reduction = "umap", label = TRUE, label.size = 5) + NoLegend()
+DimPlot(sm2_all, reduction = "umap", label = TRUE, label.size = 5) + NoLegend()
+combined_plot <- umap_sm_all1 + umap_sm2_all1
+ggsave("combined_umap_plot22.png", combined_plot, width = 12, height = 6)
+
+umap_sm_all1 <- umap_sm_all + ggtitle("protein-coding") + theme(plot.title = element_text(hjust = 0.5))
+umap_sm2_all1 <- umap_sm2_all + ggtitle("protein-coding + lncRNA") + theme(plot.title = element_text(hjust = 0.5))
+
+# Combine the two UMAP plots side by side
+combined_plot <- umap_sm_all + umap_sm2_all
+
+# Save to a file
+ggsave("combined_umapcl_plotmain.png", combined_plot, width = 12, height = 6)
+
+DimPlot(sm_all, reduction = "umap")
+DimPlot(sm2_all, reduction = "umap")
+ggsave("day2somules_v10clust_40PC_0.4res_SCT.pdf")
+sm2_all1111 <- SCTransform(sm2_all, verbose = TRUE)
+
+#plotting genes
+FeaturePlot(sm_all, features = "Smp-031770")
+FeaturePlot(sm_all, features = "Smp-086860")
+FeaturePlot(sm_all, features = "Smp-131400")
+FeaturePlot(sm_all, features = "Smp-035480")
+FeaturePlot(sm_all, features = "Smp-075770")
+
+FeaturePlot(sm_all, features = "Smp-337260")
+FeaturePlot(sm_all, features = "Smp-142740")
+
+FeaturePlot(sm_all, features = "Smp-068240")
+FeaturePlot(sm_all, features = "Smp-035480")
+
+coexpression.plot <-FeaturePlot(sm_all, features = c("Smp-142740", "Smp-337260"), blend = TRUE)
+coexpression.plot
+
+FeaturePlot(sm_all, features = "Smp-032950")
+FeaturePlot(sm_all, features = "Smp-142900")
+
+
+FeaturePlot(sm_all, features = "Smp-086860")
+FeaturePlot(sm_all, features = "Smp-032950")
+FeaturePlot(sm_all, features = "Smp-030000")
+FeaturePlot(sm_all, features = "Smp-141610")
+FeaturePlot(sm_all, features = "Smp-095360")
+FeaturePlot(sm_all, features = "Smp-090080")
+FeaturePlot(sm_all, features = "Smp-169460")
+FeaturePlot(sm_all, features = "Smp-074570")
+FeaturePlot(sm_all, features = "Smp-077720")
+FeaturePlot(sm_all, features = "Smp-022450")
+FeaturePlot(sm_all, features = "Smp-307010")
+FeaturePlot(sm_all, features = "Smp-307020")
+FeaturePlot(sm_all, features = "Smp-246100")
+FeaturePlot(sm_all, features = "Smp-331390")
+FeaturePlot(sm_all, features = "Smp-203580")
+FeaturePlot(sm_all, features = "Smp-333600")
+FeaturePlot(sm_all, features = "Smp-077980")
+FeaturePlot(sm_all, features = "Smp-073270")
+FeaturePlot(sm_all, features = "Smp-169730")
+FeaturePlot(sm_all, features = "Smp-161510")
+FeaturePlot(sm_all, features = "Smp-167400")
+FeaturePlot(sm_all, features = "Smp-153210")
+FeaturePlot(sm_all, features = "Smp-132210")
+FeaturePlot(sm_all, features = "Smp-176110")
+FeaturePlot(sm_all, features = "Smp-303420")
+FeaturePlot(sm_all, features = "Smp-320760")
+FeaturePlot(sm_all, features = "Smp-176020")
+FeaturePlot(sm_all, features = "Smp-307220")
+FeaturePlot(sm_all, features = "Smp-307220")
+FeaturePlot(sm_all, features = "Smp-176020")
+FeaturePlot(sm_all, features = "Smp-307220")
+FeaturePlot(sm_all, features = "Smp-072470")
+FeaturePlot(sm_all, features = "Smp-136760")
+
+
+
+FeaturePlot(sm2_all, features = "Smp-086860")
+FeaturePlot(sm2_all, features = "Smp-032950")
+FeaturePlot(sm2_all, features = "Smp-030000")
+FeaturePlot(sm2_all, features = "Smp-141610")
+FeaturePlot(sm2_all, features = "Smp-095360")
+FeaturePlot(sm2_all, features = "Smp-090080")
+FeaturePlot(sm2_all, features = "Smp-169460")
+FeaturePlot(sm2_all, features = "Smp-074570")
+FeaturePlot(sm2_all, features = "Smp-077720")
+FeaturePlot(sm2_all, features = "Smp-022450")
+FeaturePlot(sm2_all, features = "Smp-307010")
+FeaturePlot(sm2_all, features = "Smp-307020")
+FeaturePlot(sm2_all, features = "Smp-246100")
+FeaturePlot(sm2_all, features = "Smp-331390")
+FeaturePlot(sm2_all, features = "Smp-203580")
+FeaturePlot(sm2_all, features = "Smp-333600")
+FeaturePlot(sm2_all, features = "Smp-077980")
+FeaturePlot(sm2_all, features = "Smp-073270")
+FeaturePlot(sm2_all, features = "Smp-169730")
+FeaturePlot(sm2_all, features = "Smp-161510")
+FeaturePlot(sm2_all, features = "Smp-167400")
+FeaturePlot(sm2_all, features = "Smp-153210")
+FeaturePlot(sm2_all, features = "Smp-132210")
+FeaturePlot(sm2_all, features = "Smp-176110")
+FeaturePlot(sm2_all, features = "Smp-303420")
+FeaturePlot(sm2_all, features = "Smp-320760")
+FeaturePlot(sm2_all, features = "Smp-176020")
+FeaturePlot(sm2_all, features = "Smp-307220")
+FeaturePlot(sm2_all, features = "Smp-307220")
+FeaturePlot(sm2_all, features = "Smp-176020")
+FeaturePlot(sm2_all, features = "Smp-307220")
+FeaturePlot(sm2_all, features = "Smp-072470")
+FeaturePlot(sm2_all, features = "Smp-136760")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FeaturePlot(sm_all, features = "")
+FeaturePlot(sm_all, features = "")
+FeaturePlot(sm_all, features = "")
+FeaturePlot(sm_all, features = "")
+FeaturePlot(sm_all, features = "")FeaturePlot(sm_all, features = c("Smp-142740", "Smp-337260"))
+VlnPlot(sm_all, features = c("Smp-142740", "Smp-337260"))
+
+FeaturePlot(sm_all, features = c("Smp-315610", "Smp-347150"))
+VlnPlot(sm_all, features = c("Smp-315610", "Smp-347150"))
+FeaturePlot(sm_all, features = c("Smp-315610", "Smp-347150"), 
+            cols = c("lightgrey", "blue"), 
+            min.cutoff = "q10", max.cutoff = "q90")
+
+
+
+sm_all.labels <- RenameIdents(object = sm_all, 
+                              "0" = "pc2+neurons",
+                              "1" = "Ambiguous 1",
+                              "2" = "myoD+muscle",
+                              "3" = "positional muscle",
+                              "4" = "muscle",
+                              "5" = "Ambiguous 2",
+                              "6" = "neuronal",
+                              "7" = "tegument 2",
+                              "8" = "tegument 1",
+                              "9" = "myoD+muscle",
+                              "10" = "stem/Germinal cells",
+                              "11" = "gnai+neurons",
+                              "12" = "parenchymal 2",
+                              "13" = "tegument 2",
+                              "14" = "tegument 2",
+                              "15" = "tegument 1",
+                              "16" = "stem/germ cells",
+                              "17" = "neuronal",
+                              "18" = "Smkk7+neuron",
+                              "19" = "Mega4+o.g")
+DimPlot(sm_all.labels, reduction = "umap", label = TRUE, label.size = 3)
+DimPlot(sm_all.labels, reduction = "umap", label = TRUE, label.size = 5)
+DimPlot(sm_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
+
+
+sm2_all.labels <- RenameIdents(object = sm2_all, 
+                               "0" = "pc2+neurons",
+                               "1" = "myoD+muscle",
+                               "2" = "Ambiguous 2",
+                               "3" = "myoD+muscle",
+                               "4" = "positional muscle",
+                               "5" = "positional muscle",
+                               "6" = "muscle",
+                               "7" = "neuronal",
+                               "8" = "tegument 1",
+                               "9" = "myoD+muscle",
+                               "10" = "stem/Germ cells",
+                               "11" = "gnai+neurons",
+                               "12" = "parenchymal 2",
+                               "13" = "stem/Germinal cells",
+                               "14" = "tegument 2",
+                               "15" = "tegument 1",
+                               "16" = "NDF+neuron",
+                               "17" = "neuronal",
+                               "18" = "Smkk7+neuron",
+                               "19" = "Mega4+o.g",
+                               "20" = "mixed clusters")
+DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3)
+DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
+
+
+library(Seurat)
+library(patchwork)
+
+
+
+
+umap_sm_all <- DimPlot(sm_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
+
+# Plot UMAP for sm2_all with the same color names
+umap_sm2_all <- DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
+
+# Save both plots to compare them
+ggsave("umap_sm_all.png", umap_sm_all, width = 8, height = 6)
+ggsave("umap_sm2_all.png", umap_sm2_all, width = 8, height = 6)
+
+# Combine the plots if needed
+combined_plot <- umap_sm_all + umap_sm2_all
+ggsave("combined_umap_plot22.png", combined_plot, width = 12, height = 6)
+
+sm_all.labels <- RenameIdents(object = sm_all, 
+                              "0" = "pc2+neurons",
+                              "1" = "myoD+muscle",
+                              "2" = "Ambiquous 1",
+                              "3" = "positional muscle",
+                              "4" = "muscle",
+                              "5" = "Ambiguous 2",
+                              "6" = "neuronal",
+                              "7" = "muscle",
+                              "8" = "tegument 1",
+                              "9" = "myoD+muscle",
+                              "10" = "parenchymal 1",
+                              "11" = "gnai+neurons",
+                              "12" = "parenchymal 2",
+                              "13" = "tegument 2",
+                              "14" = "neuronal",
+                              "15" = "tegument 2",
+                              "16" = "stem/Germ cells",
+                              "17" = "neuronal",
+                              "18" = "Smkk7+neuron",
+                              "19" = "Mega4+o.g")
+
+sm2_all.labels <- RenameIdents(object = sm2_all, 
+                               "0" = "pc2+neurons",
+                               "1" = "myoD+muscle",
+                               "2" = "Ambiguous 2",
+                               "3" = "myoD+muscle",
+                               "4" = "positional muscle",
+                               "5" = "positional muscle",
+                               "6" = "neuronal",
+                               "7" = "neuronal",
+                               "8" = "tegument 1",
+                               "9" = "myoD+muscle",
+                               "10" = "stem/Germ cells ",
+                               "11" = "gnai+neurons",
+                               "12" = "parenchymal 1",
+                               "13" = "parenchymal 2",
+                               "14" = "tegument 2",
+                               "15" = "tegument 1",
+                               "16" = "actin-2+muscle",
+                               "17" = "neuronal",
+                               "18" = "Smkk7+neuron",
+                               "19" = "Mega4+o.g",
+                               "20" = "mixed clusters")
+library(harmony)
+# Run Harmony integration
+#Normalize data
+#sm_all1111 <- NormalizeData(sm_all, normalization.method = "LogNormalize", scale.factor = 10000)
+
+# Find variable features
+#sm_all1111 <- FindVariableFeatures(sm_all1111, selection.method = "vst", nfeatures = 2000)
+
+# Scale data
+#sm_all1111 <- ScaleData(sm_all1111, features = all.genes)
+#sm_all1111 <- RunHarmony(sm_all1111, group.by.vars = "batch")
+#sm_all1111 <- RunPCA(sm_all1111, features = VariableFeatures(object = sm_all1111), npcs =100)
+
+
+install.packages("ggrepel")
+library(ggrepel)
+DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE) + 
+  ggplot2::geom_text_repel(max.overlaps = Inf)
+DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE) + 
+  theme(legend.position = "right")
+
+library(ggplot2)
+
+
+library(patchwork)
+library(ggplot2)  # Required for ggsave
+
+# Generate UMAP plots for sm_all.labels and sm2_all.labels
+umap_sm_all <- DimPlot(sm_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
+umap_sm2_all <- DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
+library(ggplot2)
+library(Seurat)
+
+# Add titles to each UMAP plot
+umap_sm_all <- umap_sm_all + ggtitle("protein-coding") + theme(plot.title = element_text(hjust = 0.5))
+umap_sm2_all <- umap_sm2_all + ggtitle("protein-coding + lncRNA") + theme(plot.title = element_text(hjust = 0.5))
+
+# Combine the two UMAP plots side by side
+combined_plot <- umap_sm_all + umap_sm2_all
+
+# Save to a file
+ggsave("combined_umapcl_plotmain.png", combined_plot, width = 12, height = 6)
+
+
+
+
+FeaturePlot(sm_all, features = c("Smp-086860", "Smp-032950"))
+FeaturePlot(sm2_all, features = c("gene1", "gene2"))
+
+Smp_108390
+#ggsave(paste("day2somules-Smp-179320-",st, ".pdf", sep = ""), width = 25, height = 15, units = c('cm'))
+sm_all.markers <- FindAllMarkers(object = sm_all, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+sm2_all.markers <- FindAllMarkers(object = sm2_all, only.pos = TRUE,min.pct =0.25, logfc.threshold = 0.25)
+
+top_sm_all_markers <- sm_all.markers %>% filter(p_val_adj < 0.05 & avg_log2FC > 0.25)
+top_sm2_all_markers <- sm2_all.markers %>% filter(p_val_adj < 0.05 & avg_log2FC > 0.25)
+VlnPlot(sm_all, features = "Smp-179320")
+#ggsave(paste("day2somules-Smp-179320-",st, ".pdf", sep = ""), width = 25, height = 15, units = c('cm'))
+
+FeaturePlot(sm_all, features = "Smp-179320")
+
+#ggsave(paste("day2somules-Smp-179320-",st, ".pdf", sep = ""), width = 25, height = 15, units = c('cm'))
+
+
+
+
+### Visualizing clusters
+
+# For sm_all - Visualize UMAP for different resolutions
+DimPlot(sm_all, reduction = "umap", group.by = "cluster_0.4", label = TRUE, pt.size = 0.5)
+DimPlot(sm_all, reduction = "umap", group.by = "cluster_0.8", label = TRUE, pt.size = 0.5)
+
+# For sm2_all - Visualize UMAP for different resolutions
+DimPlot(sm2_all, reduction = "umap", group.by = "cluster_0.4", label = TRUE, pt.size = 0.5)
+DimPlot(sm2_all, reduction = "umap", group.by = "cluster_0.8", label = TRUE, pt.size = 0.5)
+
+# Create a data frame with the sensitivity and precision data
+data <- data.frame(
+  Category = c('Base level', 'Exon level', 'Intron level', 'Intron chain level', 'Transcript level', 'Locus level'),
+  Sensitivity = c(24.6, 17.5, 19.9, 16.7, 16.7, 18.5),
+  Precision = c(1.4, 2.1, 2.6, 1.9, 1.9, 2.4)
+)
+
+# Convert the data to a format suitable for ggplot
+data_long <- reshape2::melt(data, id.vars = "Category", variable.name = "Metric", value.name = "Value")
+
+# Create a bar chart with ggplot2
+ggplot(data_long, aes(x = Category, y = Value, fill = Metric)) +
+  geom_bar(stat = "identity", position = "dodge") +  # Dodge puts the bars side by side
+  labs(title = "Sensitivity and Precision at Various Comparison Levels", 
+       x = "Comparison Level", 
+       y = "Percentage (%)") +
+  theme_minimal() +  # Clean theme
+  geom_text(aes(label = round(Value, 1)), vjust = -0.3, position = position_dodge(width = 0.9)) +  # Add value labels
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for readability
+
+
+
+# Define the values for the different categories
+category <- c("Transcripts (Query)", "Transcripts (Reference)", "Loci (Query)", "Loci (Reference)",
+              "Multi-exon Transcripts (Query)", "Multi-transcript Loci (Query)",
+              "Super-loci with Reference", "Union of Super-loci")
+
+# Corresponding values
+values <- c(16550, 1921, 10133, 1324, 16508, 2528, 416, 10127)
+
+# Create a data frame
+data <- data.frame(category, values)
+
+# Plot the bar chart
+library(ggplot2)
+ggplot(data, aes(x = category, y = values, fill = category)) + 
+  geom_bar(stat = "identity") + 
+  theme_minimal() + 
+  labs(title = "Genomic Annotations Overview", x = "Categories", y = "Counts") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_brewer(palette = "Set3")
