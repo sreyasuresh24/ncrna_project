@@ -34,6 +34,7 @@ py_config()  # Check that the correct Python environment is being used
 
 st <- format(Sys.time(), "%Y-%m-%d")
 st
+#loading mapped with cellranger protein-coding
 sampleS1.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS1')
 sampleS2.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS2/')
 sampleS3.data <- Read10X('/Users/sreya/Documents/filtered_matrix2/filtered_feature_bc_matrixS3/')
@@ -67,7 +68,7 @@ sm2_all <- merge(sampleS1, y = list(sampleS2, sampleS3, sampleS4, sampleS5, samp
                 project = "sm2_all")
 # Save your Seurat object to an RDS file
 saveRDS(sm2_all, file = "sm2_all_seurat_object.rds")
-
+#loading mapped wilth cell ranger protein-coding+lncRNA 
 sample1.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix1/')
 sample2.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix2/')
 sample3.data <- Read10X('/Users/sreya/OneDrive/Documents/filtered_feature_bc_matrix3/')
@@ -129,9 +130,6 @@ if ("layer" %in% names(sm2_all@assays[[DefaultAssay(sm2_all)]])) {
 # Set the default assay to "RNA" or the appropriate one
 DefaultAssay(sm2_all) <- "RNA"
 library(SingleCellExperiment)
-
-
-
 # For mouse datasets, mitochondrial genes typically start with "mt-"
 sm2_all[["percent.mt"]] <- PercentageFeatureSet(sm2_all, pattern = "ERR11178413-gene.20551.8")
 sm2_all[["percent.mt"]] <- PercentageFeatureSet(sm2_all, pattern = "Smp-9")
@@ -175,16 +173,11 @@ sm_all <- ScaleData(sm_all, features = all.genes)
 print(sm2_all[["pca"]], dims = 1:5, nfeatures = 5)
 
 VizDimLoadings(sm2_all, dims = 1:2, reduction = "pca")
-
 DimPlot(sm2_all, reduction = "pca") + NoLegend()
-
 DimHeatmap(sm2_all, dims = 1, cells = 500, balanced = TRUE)
-
 DimHeatmap(sm2_all, dims = 1:15, cells = 500, balanced = TRUE)
 
 ElbowPlot(sm2_all)
-
-
 sm2_all <- FindNeighbors(sm2_all, dims = 1:10)
 sm2_all <- FindClusters(sm2_all, resolution = 0.5)
 
@@ -193,12 +186,9 @@ sm_all <- FindClusters(sm_all, resolution = 0.5)
 
 # Look at cluster IDs of the first 5 cells
 head(Idents(sm2_all), 5)
-
-
 #non-linear
 sm2_all <- RunUMAP(sm2_all, dims = 1:10)
 sm_all <- RunUMAP(sm_all, dims = 1:10)
-
 
 # note that you can set `label = TRUE` or use the LabelClusters function to help label
 # individual clusters
@@ -209,8 +199,6 @@ sm2_all <- FindClusters(sm2_all, resolution = 0.5)
 sm_all <- FindClusters(sm_all, resolution = 0.5)
 sm2_all <- JoinLayers(sm2_all)
 sm_all <- JoinLayers(sm_all)
-
-
 sm2_all <- FindNeighbors(sm2_all, dims = 1:10)
 sm_all <- FindNeighbors(sm_all, dims = 1:10)# Adjust number of PCs if needed
 
@@ -235,8 +223,6 @@ sm_all.markers <- FindAllMarkers(sm_all, only.pos = TRUE)
 sm_all.markers %>%
   group_by(cluster) %>%
   dplyr::filter(avg_log2FC > 1)
-
-
 sm2_all <- RunPCA(sm2_all, features = filtered_variable_features, npcs = 100)
 
 #shows the weightings of top contributing features to pcs 1 and 2
@@ -418,8 +404,6 @@ VlnPlot(sm_all, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol =
 sm_all[["percent.mt"]] <- PercentageFeatureSet(sm_all, pattern = "Smp-9")
 VlnPlot(sm_all, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 
-
-
 plot1 <- FeatureScatter(sm_all, feature1 = "nCount_RNA", feature2 = "percent.mt")
 plot2 <- FeatureScatter(sm_all, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
 plot1 + plot2
@@ -447,29 +431,19 @@ sm2_all <- ScaleData(sm2_all, features = all.genes)
 
 sm2_all <- RunPCA(sm2_all, features = VariableFeatures(object = sm2_all),npcs = 100)
 sm_all <- RunPCA(sm_all, features = VariableFeatures(object = sm_all)(npcs = 100)
-
-
 # Examine and visualize PCA results a few different ways
 print(sm_all[["pca"]], dims = 1:5, nfeatures = 5)
 
 VizDimLoadings(sm_all, dims = 1:2, reduction = "pca")
-
 DimPlot(sm_all, reduction = "pca") + NoLegend()
-
 DimHeatmap(sm_all, dims = 1, cells = 500, balanced = TRUE)
-
 DimHeatmap(sm_all, dims = 1:15, cells = 500, balanced = TRUE)
-
 ElbowPlot(sm_all)
-
-
 sm_all <- FindNeighbors(sm_all, dims = 1:10)
 sm_all <- FindClusters(sm_all, resolution = 0.5)
 
 # Look at cluster IDs of the first 5 cells
 head(Idents(sm_all), 5)
-
-
 #non-linear
 sm_all <- RunUMAP(sm_all, dims = 1:10)
 
@@ -503,9 +477,6 @@ DimHeatmap(sm_all, dims = 1, cells = 500, balanced = TRUE)
 DimHeatmap(sm2_all, dims = 1, cells = 500, balanced = TRUE) 
 #jactstraw
 DefaultAssay(sm_all) <- "RNA"
-
-
-
 ElbowPlot(sm_all, ndims = 100)  #ranks PCs by percentage of variation. A clear dropoff is sometimes seen, though not really here.
 ggsave("day2somules_v10_elbowplot100.pdf")
 
@@ -527,9 +498,6 @@ ggsave("day2somules_v10clust_40PC_0.4res_RNA.pdf")
 # run sctransform
 sm_all <- SCTransform(sm_all, verbose = TRUE)
 sm2_all <- SCTransform(sm2_all, verbose = TRUE)
-
-
-#plots heatmap of top 500 mist variable cells for PC1, with relative gene expression
 
 #clustering on sct
 #here construct k-nearest neighbours graph based on euclidean distance in PCA space, then refine edge weights based on Jaccard similarity. this takes the number of PCs previously determined as important (here 40 PCs_)
@@ -558,25 +526,6 @@ ggsave("day2somules_v10clust_40PC_0.4res_SCT.pdf")
 sm2_all1111 <- SCTransform(sm2_all, verbose = TRUE)
 
 #plotting genes
-FeaturePlot(sm_all, features = "Smp-031770")
-FeaturePlot(sm_all, features = "Smp-086860")
-FeaturePlot(sm_all, features = "Smp-131400")
-FeaturePlot(sm_all, features = "Smp-035480")
-FeaturePlot(sm_all, features = "Smp-075770")
-
-FeaturePlot(sm_all, features = "Smp-337260")
-FeaturePlot(sm_all, features = "Smp-142740")
-
-FeaturePlot(sm_all, features = "Smp-068240")
-FeaturePlot(sm_all, features = "Smp-035480")
-
-coexpression.plot <-FeaturePlot(sm_all, features = c("Smp-142740", "Smp-337260"), blend = TRUE)
-coexpression.plot
-
-FeaturePlot(sm_all, features = "Smp-032950")
-FeaturePlot(sm_all, features = "Smp-142900")
-
-
 FeaturePlot(sm_all, features = "Smp-086860")
 FeaturePlot(sm_all, features = "Smp-032950")
 FeaturePlot(sm_all, features = "Smp-030000")
@@ -646,25 +595,6 @@ FeaturePlot(sm2_all, features = "Smp-176020")
 FeaturePlot(sm2_all, features = "Smp-307220")
 FeaturePlot(sm2_all, features = "Smp-072470")
 FeaturePlot(sm2_all, features = "Smp-136760")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-FeaturePlot(sm_all, features = "")
-FeaturePlot(sm_all, features = "")
-FeaturePlot(sm_all, features = "")
-FeaturePlot(sm_all, features = "")
-FeaturePlot(sm_all, features = "")FeaturePlot(sm_all, features = c("Smp-142740", "Smp-337260"))
 VlnPlot(sm_all, features = c("Smp-142740", "Smp-337260"))
 
 FeaturePlot(sm_all, features = c("Smp-315610", "Smp-347150"))
@@ -672,8 +602,6 @@ VlnPlot(sm_all, features = c("Smp-315610", "Smp-347150"))
 FeaturePlot(sm_all, features = c("Smp-315610", "Smp-347150"), 
             cols = c("lightgrey", "blue"), 
             min.cutoff = "q10", max.cutoff = "q90")
-
-
 
 sm_all.labels <- RenameIdents(object = sm_all, 
                               "0" = "pc2+neurons",
@@ -725,14 +653,8 @@ sm2_all.labels <- RenameIdents(object = sm2_all,
                                "20" = "mixed clusters")
 DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3)
 DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
-
-
 library(Seurat)
 library(patchwork)
-
-
-
-
 umap_sm_all <- DimPlot(sm_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
 
 # Plot UMAP for sm2_all with the same color names
@@ -746,50 +668,17 @@ ggsave("umap_sm2_all.png", umap_sm2_all, width = 8, height = 6)
 combined_plot <- umap_sm_all + umap_sm2_all
 ggsave("combined_umap_plot22.png", combined_plot, width = 12, height = 6)
 
-sm_all.labels <- RenameIdents(object = sm_all, 
-                              "0" = "pc2+neurons",
-                              "1" = "myoD+muscle",
-                              "2" = "Ambiquous 1",
-                              "3" = "positional muscle",
-                              "4" = "muscle",
-                              "5" = "Ambiguous 2",
-                              "6" = "neuronal",
-                              "7" = "muscle",
-                              "8" = "tegument 1",
-                              "9" = "myoD+muscle",
-                              "10" = "parenchymal 1",
-                              "11" = "gnai+neurons",
-                              "12" = "parenchymal 2",
-                              "13" = "tegument 2",
-                              "14" = "neuronal",
-                              "15" = "tegument 2",
-                              "16" = "stem/Germ cells",
-                              "17" = "neuronal",
-                              "18" = "Smkk7+neuron",
-                              "19" = "Mega4+o.g")
+library(Seurat)
+library(patchwork)
+umap_sm_all <- DimPlot(sm_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
 
-sm2_all.labels <- RenameIdents(object = sm2_all, 
-                               "0" = "pc2+neurons",
-                               "1" = "myoD+muscle",
-                               "2" = "Ambiguous 2",
-                               "3" = "myoD+muscle",
-                               "4" = "positional muscle",
-                               "5" = "positional muscle",
-                               "6" = "neuronal",
-                               "7" = "neuronal",
-                               "8" = "tegument 1",
-                               "9" = "myoD+muscle",
-                               "10" = "stem/Germ cells ",
-                               "11" = "gnai+neurons",
-                               "12" = "parenchymal 1",
-                               "13" = "parenchymal 2",
-                               "14" = "tegument 2",
-                               "15" = "tegument 1",
-                               "16" = "actin-2+muscle",
-                               "17" = "neuronal",
-                               "18" = "Smkk7+neuron",
-                               "19" = "Mega4+o.g",
-                               "20" = "mixed clusters")
+# Plot UMAP for sm2_all with the same color names
+umap_sm2_all <- DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
+# Combine the plots if needed
+combined_plot <- umap_sm_all + umap_sm2_all
+ggsave("combined_umap_plot22.png", combined_plot, width = 12, height = 6)
+
+
 library(harmony)
 # Run Harmony integration
 #Normalize data
@@ -811,18 +700,8 @@ DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel 
 DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE) + 
   theme(legend.position = "right")
 
-library(ggplot2)
-
-
 library(patchwork)
-library(ggplot2)  # Required for ggsave
-
-# Generate UMAP plots for sm_all.labels and sm2_all.labels
-umap_sm_all <- DimPlot(sm_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
-umap_sm2_all <- DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
-library(ggplot2)
 library(Seurat)
-
 # Add titles to each UMAP plot
 umap_sm_all <- umap_sm_all + ggtitle("protein-coding") + theme(plot.title = element_text(hjust = 0.5))
 umap_sm2_all <- umap_sm2_all + ggtitle("protein-coding + lncRNA") + theme(plot.title = element_text(hjust = 0.5))
@@ -832,78 +711,12 @@ combined_plot <- umap_sm_all + umap_sm2_all
 
 # Save to a file
 ggsave("combined_umapcl_plotmain.png", combined_plot, width = 12, height = 6)
-
-
-
-
 FeaturePlot(sm_all, features = c("Smp-086860", "Smp-032950"))
 FeaturePlot(sm2_all, features = c("gene1", "gene2"))
 
-Smp_108390
 #ggsave(paste("day2somules-Smp-179320-",st, ".pdf", sep = ""), width = 25, height = 15, units = c('cm'))
 sm_all.markers <- FindAllMarkers(object = sm_all, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
 sm2_all.markers <- FindAllMarkers(object = sm2_all, only.pos = TRUE,min.pct =0.25, logfc.threshold = 0.25)
 
 top_sm_all_markers <- sm_all.markers %>% filter(p_val_adj < 0.05 & avg_log2FC > 0.25)
 top_sm2_all_markers <- sm2_all.markers %>% filter(p_val_adj < 0.05 & avg_log2FC > 0.25)
-VlnPlot(sm_all, features = "Smp-179320")
-#ggsave(paste("day2somules-Smp-179320-",st, ".pdf", sep = ""), width = 25, height = 15, units = c('cm'))
-
-FeaturePlot(sm_all, features = "Smp-179320")
-
-#ggsave(paste("day2somules-Smp-179320-",st, ".pdf", sep = ""), width = 25, height = 15, units = c('cm'))
-
-
-
-
-### Visualizing clusters
-
-# For sm_all - Visualize UMAP for different resolutions
-DimPlot(sm_all, reduction = "umap", group.by = "cluster_0.4", label = TRUE, pt.size = 0.5)
-DimPlot(sm_all, reduction = "umap", group.by = "cluster_0.8", label = TRUE, pt.size = 0.5)
-
-# For sm2_all - Visualize UMAP for different resolutions
-DimPlot(sm2_all, reduction = "umap", group.by = "cluster_0.4", label = TRUE, pt.size = 0.5)
-DimPlot(sm2_all, reduction = "umap", group.by = "cluster_0.8", label = TRUE, pt.size = 0.5)
-
-# Create a data frame with the sensitivity and precision data
-data <- data.frame(
-  Category = c('Base level', 'Exon level', 'Intron level', 'Intron chain level', 'Transcript level', 'Locus level'),
-  Sensitivity = c(24.6, 17.5, 19.9, 16.7, 16.7, 18.5),
-  Precision = c(1.4, 2.1, 2.6, 1.9, 1.9, 2.4)
-)
-
-# Convert the data to a format suitable for ggplot
-data_long <- reshape2::melt(data, id.vars = "Category", variable.name = "Metric", value.name = "Value")
-
-# Create a bar chart with ggplot2
-ggplot(data_long, aes(x = Category, y = Value, fill = Metric)) +
-  geom_bar(stat = "identity", position = "dodge") +  # Dodge puts the bars side by side
-  labs(title = "Sensitivity and Precision at Various Comparison Levels", 
-       x = "Comparison Level", 
-       y = "Percentage (%)") +
-  theme_minimal() +  # Clean theme
-  geom_text(aes(label = round(Value, 1)), vjust = -0.3, position = position_dodge(width = 0.9)) +  # Add value labels
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for readability
-
-
-
-# Define the values for the different categories
-category <- c("Transcripts (Query)", "Transcripts (Reference)", "Loci (Query)", "Loci (Reference)",
-              "Multi-exon Transcripts (Query)", "Multi-transcript Loci (Query)",
-              "Super-loci with Reference", "Union of Super-loci")
-
-# Corresponding values
-values <- c(16550, 1921, 10133, 1324, 16508, 2528, 416, 10127)
-
-# Create a data frame
-data <- data.frame(category, values)
-
-# Plot the bar chart
-library(ggplot2)
-ggplot(data, aes(x = category, y = values, fill = category)) + 
-  geom_bar(stat = "identity") + 
-  theme_minimal() + 
-  labs(title = "Genomic Annotations Overview", x = "Categories", y = "Counts") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_fill_brewer(palette = "Set3")
