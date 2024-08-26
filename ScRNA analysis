@@ -64,8 +64,8 @@ sampleS12 <- CreateSeuratObject(counts = sampleS12.data, project = "sampleS12", 
 
 # Merge samples into one Seurat object
 sm2_all <- merge(sampleS1, y = list(sampleS2, sampleS3, sampleS4, sampleS5, sampleS6, sampleS7, sampleS8, sampleS9, sampleS10, sampleS11, sampleS12),
-                add.cell.ids = c("sampleS1", "sampleS2", "sampleS3", "sampleS4", "sampleS5", "sampleS6", "sampleS7", "sampleS8", "sampleS9", "sampleS10", "sampleS11", "sampleS12"),
-                project = "sm2_all")
+                 add.cell.ids = c("sampleS1", "sampleS2", "sampleS3", "sampleS4", "sampleS5", "sampleS6", "sampleS7", "sampleS8", "sampleS9", "sampleS10", "sampleS11", "sampleS12"),
+                 project = "sm2_all")
 # Save your Seurat object to an RDS file
 saveRDS(sm2_all, file = "sm2_all_seurat_object.rds")
 #loading mapped wilth cell ranger protein-coding+lncRNA 
@@ -244,7 +244,6 @@ sm2_all <- FindClusters(sm2_all, resolution = 0.5)
 sm2_all <- RunUMAP(sm2_all, dims = 1:40) 
 #visulaises the UMAP
 DimPlot(sm2_all, reduction = "umap") 
-ggsave("day2somules_v10clust_40PC_0.4res_RNA.pdf")
 
 # Find markers for every cluster
 sm2_all.markers <- FindAllMarkers(sm2_all, only.pos = TRUE, min.pct = 0.1, logfc.threshold = 0.25)
@@ -293,14 +292,13 @@ sm2_all <- FindClusters(sm2_all, resolution = 0.5)
 sm2_all <- RunUMAP(sm2_all, dims = 1:40) 
 #visualises the UMAP
 DimPlot(sm2_all, reduction = "umap") 
-ggsave("day2somules_v10clust_40PC_0.4res_SCT.pdf")
+
 
 #plotting genes
 FeaturePlot(sm2_all, features = "Smp-179320")
-#ggsave(paste("day2somules-Smp-179320-",st, ".pdf", sep = ""), width = 25, height = 15, units = c('cm'))
+
 
 VlnPlot(sm2_all, features = "Smp-179320")
-#ggsave(paste("day2somules-Smp-179320-",st, ".pdf", sep = ""), width = 25, height = 15, units = c('cm'))
 
 save.image(file = "my_environment.RData")
 
@@ -365,7 +363,7 @@ sm2_all.markers <- FindAllMarkers(sm2_all, only.pos = TRUE)
 sm2_all.markers %>%
   group_by(cluster) %>%
   dplyr::filter(avg_log2FC > 1)
-  View(sm2_all.markers)
+View(sm2_all.markers)
 
 # Find markers for cluster 0
 sm2_all.markers_roc_cluster0 <- FindMarkers(sm2_all, ident.1 = 0, only.pos = TRUE, min.pct = 0.0, logfc.threshold = 0.0, test.use = "roc")
@@ -433,7 +431,7 @@ sm2_all <- RunPCA(sm2_all, features = VariableFeatures(object = sm2_all),npcs = 
 sm_all <- RunPCA(sm_all, features = VariableFeatures(object = sm_all)(npcs = 100)
 # Examine and visualize PCA results a few different ways
 print(sm_all[["pca"]], dims = 1:5, nfeatures = 5)
-
+                 
 VizDimLoadings(sm_all, dims = 1:2, reduction = "pca")
 DimPlot(sm_all, reduction = "pca") + NoLegend()
 DimHeatmap(sm_all, dims = 1, cells = 500, balanced = TRUE)
@@ -441,32 +439,36 @@ DimHeatmap(sm_all, dims = 1:15, cells = 500, balanced = TRUE)
 ElbowPlot(sm_all)
 sm_all <- FindNeighbors(sm_all, dims = 1:10)
 sm_all <- FindClusters(sm_all, resolution = 0.5)
-
+                 
 # Look at cluster IDs of the first 5 cells
 head(Idents(sm_all), 5)
 #non-linear
 sm_all <- RunUMAP(sm_all, dims = 1:10)
+                 
 
-# note that you can set label = TRUE or use the LabelClusters function to help label
-# individual clusters
 DimPlot(sm_all, reduction = "umap")
 table(Idents(sm_all))
 sm_all <- FindClusters(sm_all, resolution = 0.5)
 sm_all <- JoinLayers(sm_all)
-
+                 
 # find all markers of cluster 2
 sm_all.markers_roc_cluster0 <- FindMarkers(sm_all, ident.1 = 0, only.pos = TRUE, min.pct = 0.0, logfc.threshold = 0.0, test.use = "roc")
 head(sm_all.markers_roc_cluster0, n = 5)
-
+                 
 # find markers for every cluster compared to all remaining cells, report only the positive
 # ones
 sm_all.markers <- FindAllMarkers(sm_all, only.pos = TRUE)
 sm2_all.markers <- FindAllMarkers(sm2_all, only.pos = TRUE)
 sm_all.markers %>%
-  group_by(cluster) %>%
-  dplyr::filter(avg_log2FC > 1)
+group_by(cluster) %>%
+dplyr::filter(avg_log2FC > 1)
 
+sm_all.markers <- FindAllMarkers(object = sm_all, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+sm2_all.markers <- FindAllMarkers(object = sm2_all, only.pos = TRUE,min.pct =0.25, logfc.threshold = 0.25)
 
+top_sm_all_markers <- sm_all.markers %>% filter(p_val_adj < 0.05 & avg_log2FC > 0.25)
+top_sm2_all_markers <- sm2_all.markers %>% filter(p_val_adj < 0.05 & avg_log2FC > 0.25)                 
+                 
 #shows top contributing features for the PCs
 sm_all <- RunPCA(sm_all, features = VariableFeatures(object = sm_all),npcs = 100) 
 #shows the weightings of top contributing features to pcs 1 and 2
@@ -478,7 +480,6 @@ DimHeatmap(sm2_all, dims = 1, cells = 500, balanced = TRUE)
 #jactstraw
 DefaultAssay(sm_all) <- "RNA"
 ElbowPlot(sm_all, ndims = 100)  #ranks PCs by percentage of variation. A clear dropoff is sometimes seen, though not really here.
-ggsave("day2somules_v10_elbowplot100.pdf")
 
 #clusters
 #here construct k-nearst neighbours graoh based on euclidean distance in PCA space, then refine edge weights based on Jaccard similarity. this takes the number of PCs previously determined as important (here 40 PCs_)
@@ -493,12 +494,12 @@ sm2_all <- RunUMAP(sm2_all, dims = 1:40)
 #visulaises the UMAP
 DimPlot(sm_all, reduction = "umap") 
 DimPlot(sm2_all,reduction = "umap")
-ggsave("day2somules_v10clust_40PC_0.4res_RNA.pdf")
 
+                 
 # run sctransform
 sm_all <- SCTransform(sm_all, verbose = TRUE)
 sm2_all <- SCTransform(sm2_all, verbose = TRUE)
-
+                 
 #clustering on sct
 #here construct k-nearest neighbours graph based on euclidean distance in PCA space, then refine edge weights based on Jaccard similarity. this takes the number of PCs previously determined as important (here 40 PCs_)
 sm_all <- FindNeighbors(sm_all, dims = 1:40) 
@@ -510,99 +511,95 @@ DimPlot(sm_all, reduction = "umap", label = TRUE, label.size = 5) + NoLegend()
 DimPlot(sm2_all, reduction = "umap", label = TRUE, label.size = 5) + NoLegend()
 combined_plot <- umap_sm_all1 + umap_sm2_all1
 ggsave("combined_umap_plot22.png", combined_plot, width = 12, height = 6)
-
 umap_sm_all1 <- umap_sm_all + ggtitle("protein-coding") + theme(plot.title = element_text(hjust = 0.5))
 umap_sm2_all1 <- umap_sm2_all + ggtitle("protein-coding + lncRNA") + theme(plot.title = element_text(hjust = 0.5))
-
 # Combine the two UMAP plots side by side
 combined_plot <- umap_sm_all + umap_sm2_all
-
 # Save to a file
 ggsave("combined_umapcl_plotmain.png", combined_plot, width = 12, height = 6)
-
-DimPlot(sm_all, reduction = "umap")
+                 
+ DimPlot(sm_all, reduction = "umap")
 DimPlot(sm2_all, reduction = "umap")
-ggsave("day2somules_v10clust_40PC_0.4res_SCT.pdf")
+
 sm2_all1111 <- SCTransform(sm2_all, verbose = TRUE)
-
-#plotting genes
-FeaturePlot(sm_all, features = "Smp-086860")
-FeaturePlot(sm_all, features = "Smp-032950")
-FeaturePlot(sm_all, features = "Smp-030000")
-FeaturePlot(sm_all, features = "Smp-141610")
-FeaturePlot(sm_all, features = "Smp-095360")
-FeaturePlot(sm_all, features = "Smp-090080")
-FeaturePlot(sm_all, features = "Smp-169460")
-FeaturePlot(sm_all, features = "Smp-074570")
-FeaturePlot(sm_all, features = "Smp-077720")
-FeaturePlot(sm_all, features = "Smp-022450")
-FeaturePlot(sm_all, features = "Smp-307010")
-FeaturePlot(sm_all, features = "Smp-307020")
-FeaturePlot(sm_all, features = "Smp-246100")
-FeaturePlot(sm_all, features = "Smp-331390")
-FeaturePlot(sm_all, features = "Smp-203580")
-FeaturePlot(sm_all, features = "Smp-333600")
-FeaturePlot(sm_all, features = "Smp-077980")
-FeaturePlot(sm_all, features = "Smp-073270")
-FeaturePlot(sm_all, features = "Smp-169730")
-FeaturePlot(sm_all, features = "Smp-161510")
-FeaturePlot(sm_all, features = "Smp-167400")
-FeaturePlot(sm_all, features = "Smp-153210")
-FeaturePlot(sm_all, features = "Smp-132210")
-FeaturePlot(sm_all, features = "Smp-176110")
-FeaturePlot(sm_all, features = "Smp-303420")
-FeaturePlot(sm_all, features = "Smp-320760")
-FeaturePlot(sm_all, features = "Smp-176020")
-FeaturePlot(sm_all, features = "Smp-307220")
-FeaturePlot(sm_all, features = "Smp-307220")
-FeaturePlot(sm_all, features = "Smp-176020")
-FeaturePlot(sm_all, features = "Smp-307220")
-FeaturePlot(sm_all, features = "Smp-072470")
-FeaturePlot(sm_all, features = "Smp-136760")
-
-
-
-FeaturePlot(sm2_all, features = "Smp-086860")
-FeaturePlot(sm2_all, features = "Smp-032950")
-FeaturePlot(sm2_all, features = "Smp-030000")
-FeaturePlot(sm2_all, features = "Smp-141610")
-FeaturePlot(sm2_all, features = "Smp-095360")
-FeaturePlot(sm2_all, features = "Smp-090080")
-FeaturePlot(sm2_all, features = "Smp-169460")
-FeaturePlot(sm2_all, features = "Smp-074570")
-FeaturePlot(sm2_all, features = "Smp-077720")
-FeaturePlot(sm2_all, features = "Smp-022450")
-FeaturePlot(sm2_all, features = "Smp-307010")
-FeaturePlot(sm2_all, features = "Smp-307020")
-FeaturePlot(sm2_all, features = "Smp-246100")
-FeaturePlot(sm2_all, features = "Smp-331390")
-FeaturePlot(sm2_all, features = "Smp-203580")
-FeaturePlot(sm2_all, features = "Smp-333600")
-FeaturePlot(sm2_all, features = "Smp-077980")
-FeaturePlot(sm2_all, features = "Smp-073270")
-FeaturePlot(sm2_all, features = "Smp-169730")
-FeaturePlot(sm2_all, features = "Smp-161510")
-FeaturePlot(sm2_all, features = "Smp-167400")
-FeaturePlot(sm2_all, features = "Smp-153210")
-FeaturePlot(sm2_all, features = "Smp-132210")
-FeaturePlot(sm2_all, features = "Smp-176110")
-FeaturePlot(sm2_all, features = "Smp-303420")
-FeaturePlot(sm2_all, features = "Smp-320760")
-FeaturePlot(sm2_all, features = "Smp-176020")
-FeaturePlot(sm2_all, features = "Smp-307220")
-FeaturePlot(sm2_all, features = "Smp-307220")
-FeaturePlot(sm2_all, features = "Smp-176020")
-FeaturePlot(sm2_all, features = "Smp-307220")
-FeaturePlot(sm2_all, features = "Smp-072470")
-FeaturePlot(sm2_all, features = "Smp-136760")
+ #plotting genes
+                 FeaturePlot(sm_all, features = "Smp-086860")
+                 FeaturePlot(sm_all, features = "Smp-032950")
+                 FeaturePlot(sm_all, features = "Smp-030000")
+                 FeaturePlot(sm_all, features = "Smp-141610")
+                 FeaturePlot(sm_all, features = "Smp-095360")
+                 FeaturePlot(sm_all, features = "Smp-090080")
+                 FeaturePlot(sm_all, features = "Smp-169460")
+                 FeaturePlot(sm_all, features = "Smp-074570")
+                 FeaturePlot(sm_all, features = "Smp-077720")
+                 FeaturePlot(sm_all, features = "Smp-022450")
+                 FeaturePlot(sm_all, features = "Smp-307010")
+                 FeaturePlot(sm_all, features = "Smp-307020")
+                 FeaturePlot(sm_all, features = "Smp-246100")
+                 FeaturePlot(sm_all, features = "Smp-331390")
+                 FeaturePlot(sm_all, features = "Smp-203580")
+                 FeaturePlot(sm_all, features = "Smp-333600")
+                 FeaturePlot(sm_all, features = "Smp-077980")
+                 FeaturePlot(sm_all, features = "Smp-073270")
+                 FeaturePlot(sm_all, features = "Smp-169730")
+                 FeaturePlot(sm_all, features = "Smp-161510")
+                 FeaturePlot(sm_all, features = "Smp-167400")
+                 FeaturePlot(sm_all, features = "Smp-153210")
+                 FeaturePlot(sm_all, features = "Smp-132210")
+                 FeaturePlot(sm_all, features = "Smp-176110")
+                 FeaturePlot(sm_all, features = "Smp-303420")
+                 FeaturePlot(sm_all, features = "Smp-320760")
+                 FeaturePlot(sm_all, features = "Smp-176020")
+                 FeaturePlot(sm_all, features = "Smp-307220")
+                 FeaturePlot(sm_all, features = "Smp-307220")
+                 FeaturePlot(sm_all, features = "Smp-176020")
+                 FeaturePlot(sm_all, features = "Smp-307220")
+                 FeaturePlot(sm_all, features = "Smp-072470")
+                 FeaturePlot(sm_all, features = "Smp-136760")
+                 
+                 
+                 
+                 FeaturePlot(sm2_all, features = "Smp-086860")
+                 FeaturePlot(sm2_all, features = "Smp-032950")
+                 FeaturePlot(sm2_all, features = "Smp-030000")
+                 FeaturePlot(sm2_all, features = "Smp-141610")
+                 FeaturePlot(sm2_all, features = "Smp-095360")
+                 FeaturePlot(sm2_all, features = "Smp-090080")
+                 FeaturePlot(sm2_all, features = "Smp-169460")
+                 FeaturePlot(sm2_all, features = "Smp-074570")
+                 FeaturePlot(sm2_all, features = "Smp-077720")
+                 FeaturePlot(sm2_all, features = "Smp-022450")
+                 FeaturePlot(sm2_all, features = "Smp-307010")
+                 FeaturePlot(sm2_all, features = "Smp-307020")
+                 FeaturePlot(sm2_all, features = "Smp-246100")
+                 FeaturePlot(sm2_all, features = "Smp-331390")
+                 FeaturePlot(sm2_all, features = "Smp-203580")
+                 FeaturePlot(sm2_all, features = "Smp-333600")
+                 FeaturePlot(sm2_all, features = "Smp-077980")
+                 FeaturePlot(sm2_all, features = "Smp-073270")
+                 FeaturePlot(sm2_all, features = "Smp-169730")
+                 FeaturePlot(sm2_all, features = "Smp-161510")
+                 FeaturePlot(sm2_all, features = "Smp-167400")
+                 FeaturePlot(sm2_all, features = "Smp-153210")
+                 FeaturePlot(sm2_all, features = "Smp-132210")
+                 FeaturePlot(sm2_all, features = "Smp-176110")
+                 FeaturePlot(sm2_all, features = "Smp-303420")
+                 FeaturePlot(sm2_all, features = "Smp-320760")
+                 FeaturePlot(sm2_all, features = "Smp-176020")
+                 FeaturePlot(sm2_all, features = "Smp-307220")
+                 FeaturePlot(sm2_all, features = "Smp-307220")
+                 FeaturePlot(sm2_all, features = "Smp-176020")
+                 FeaturePlot(sm2_all, features = "Smp-307220")
+                 FeaturePlot(sm2_all, features = "Smp-072470")
+                 FeaturePlot(sm2_all, features = "Smp-136760")
 VlnPlot(sm_all, features = c("Smp-142740", "Smp-337260"))
-
+                 
 FeaturePlot(sm_all, features = c("Smp-315610", "Smp-347150"))
 VlnPlot(sm_all, features = c("Smp-315610", "Smp-347150"))
 FeaturePlot(sm_all, features = c("Smp-315610", "Smp-347150"), 
-            cols = c("lightgrey", "blue"), 
-            min.cutoff = "q10", max.cutoff = "q90")
-
+                             cols = c("lightgrey", "blue"), 
+                             min.cutoff = "q10", max.cutoff = "q90")
+                 
 sm_all.labels <- RenameIdents(object = sm_all, 
                               "0" = "pc2+neurons",
                               "1" = "Ambiguous 1",
@@ -627,96 +624,87 @@ sm_all.labels <- RenameIdents(object = sm_all,
 DimPlot(sm_all.labels, reduction = "umap", label = TRUE, label.size = 3)
 DimPlot(sm_all.labels, reduction = "umap", label = TRUE, label.size = 5)
 DimPlot(sm_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
-
-
+                 
+                 
 sm2_all.labels <- RenameIdents(object = sm2_all, 
-                               "0" = "pc2+neurons",
-                               "1" = "myoD+muscle",
-                               "2" = "Ambiguous 2",
-                               "3" = "myoD+muscle",
-                               "4" = "positional muscle",
-                               "5" = "positional muscle",
-                               "6" = "muscle",
-                               "7" = "neuronal",
-                               "8" = "tegument 1",
-                               "9" = "myoD+muscle",
-                               "10" = "stem/Germ cells",
-                               "11" = "gnai+neurons",
-                               "12" = "parenchymal 2",
-                               "13" = "stem/Germinal cells",
-                               "14" = "tegument 2",
-                               "15" = "tegument 1",
-                               "16" = "NDF+neuron",
-                               "17" = "neuronal",
-                               "18" = "Smkk7+neuron",
-                               "19" = "Mega4+o.g",
-                               "20" = "mixed clusters")
+                              "0" = "pc2+neurons",
+                              "1" = "myoD+muscle",
+                              "2" = "Ambiguous 2",
+                              "3" = "myoD+muscle",
+                              "4" = "positional muscle",
+                              "5" = "positional muscle",
+                              "6" = "muscle",
+                              "7" = "neuronal",
+                              "8" = "tegument 1",
+                              "9" = "myoD+muscle",
+                              "10" = "stem/Germ cells",
+                              "11" = "gnai+neurons",
+                              "12" = "parenchymal 2",
+                              "13" = "stem/Germinal cells",
+                              "14" = "tegument 2",
+                              "15" = "tegument 1",
+                              "16" = "NDF+neuron",
+                              "17" = "neuronal",
+                              "18" = "Smkk7+neuron",
+                              "19" = "Mega4+o.g",
+                              "20" = "mixed clusters")
 DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3)
 DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
 library(Seurat)
 library(patchwork)
 umap_sm_all <- DimPlot(sm_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
-
+                 
 # Plot UMAP for sm2_all with the same color names
 umap_sm2_all <- DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
-
+                 
 # Save both plots to compare them
 ggsave("umap_sm_all.png", umap_sm_all, width = 8, height = 6)
 ggsave("umap_sm2_all.png", umap_sm2_all, width = 8, height = 6)
-
+                 
 # Combine the plots if needed
 combined_plot <- umap_sm_all + umap_sm2_all
 ggsave("combined_umap_plot22.png", combined_plot, width = 12, height = 6)
-
+                 
 library(Seurat)
 library(patchwork)
 umap_sm_all <- DimPlot(sm_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
-
+                 
 # Plot UMAP for sm2_all with the same color names
 umap_sm2_all <- DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE)
 # Combine the plots if needed
 combined_plot <- umap_sm_all + umap_sm2_all
 ggsave("combined_umap_plot22.png", combined_plot, width = 12, height = 6)
-
-
+                 
+                 
 library(harmony)
 # Run Harmony integration
 #Normalize data
 #sm_all1111 <- NormalizeData(sm_all, normalization.method = "LogNormalize", scale.factor = 10000)
-
+                 
 # Find variable features
 #sm_all1111 <- FindVariableFeatures(sm_all1111, selection.method = "vst", nfeatures = 2000)
-
+                 
 # Scale data
 #sm_all1111 <- ScaleData(sm_all1111, features = all.genes)
 #sm_all1111 <- RunHarmony(sm_all1111, group.by.vars = "batch")
 #sm_all1111 <- RunPCA(sm_all1111, features = VariableFeatures(object = sm_all1111), npcs =100)
-
-
+                 
 install.packages("ggrepel")
 library(ggrepel)
 DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE) + 
-  ggplot2::geom_text_repel(max.overlaps = Inf)
+ggplot2::geom_text_repel(max.overlaps = Inf)
 DimPlot(sm2_all.labels, reduction = "umap", label = TRUE, label.size = 3, repel = TRUE) + 
-  theme(legend.position = "right")
-
+                   theme(legend.position = "right")
 library(patchwork)
 library(Seurat)
 # Add titles to each UMAP plot
 umap_sm_all <- umap_sm_all + ggtitle("protein-coding") + theme(plot.title = element_text(hjust = 0.5))
 umap_sm2_all <- umap_sm2_all + ggtitle("protein-coding + lncRNA") + theme(plot.title = element_text(hjust = 0.5))
-
+                 
 # Combine the two UMAP plots side by side
 combined_plot <- umap_sm_all + umap_sm2_all
-
+                 
 # Save to a file
 ggsave("combined_umapcl_plotmain.png", combined_plot, width = 12, height = 6)
 FeaturePlot(sm_all, features = c("Smp-086860", "Smp-032950"))
 FeaturePlot(sm2_all, features = c("gene1", "gene2"))
-
-#ggsave(paste("day2somules-Smp-179320-",st, ".pdf", sep = ""), width = 25, height = 15, units = c('cm'))
-sm_all.markers <- FindAllMarkers(object = sm_all, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
-sm2_all.markers <- FindAllMarkers(object = sm2_all, only.pos = TRUE,min.pct =0.25, logfc.threshold = 0.25)
-
-top_sm_all_markers <- sm_all.markers %>% filter(p_val_adj < 0.05 & avg_log2FC > 0.25)
-top_sm2_all_markers <- sm2_all.markers %>% filter(p_val_adj < 0.05 & avg_log2FC > 0.25)
