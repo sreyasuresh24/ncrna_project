@@ -1,3 +1,4 @@
+CHARACTERIZATION OF LONG NON-CODING RNA IN SCHISTOSOMA MANSONI
 curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$
 bash Miniforge3-$(uname)-$(uname -m).sh
 
