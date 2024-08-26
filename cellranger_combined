@@ -1,1 +1,40 @@
+#!/bin/bash -l
+
+############# SLURM SETTINGS #############
+#SBATCH --account=project0014   # account name (mandatory), if the job runs under a project then it'll be the project name, if not then it should =none
+#SBATCH --job-name=mkref        # some descriptive job name of your choice
+#SBATCH --output=%x-%j.out      # output file name will contain job name + job ID
+#SBATCH --error=%x-%j.err       # error file name will contain job name + job ID
+#SBATCH --partition=nodes        # which partition to use, default on MARS is “nodes"
+#SBATCH --time=0-04:00:00       # time limit for the whole run, in the form of d-hh:mm:ss, also accepts mm, mm:ss, hh:mm:ss, d-hh, d-hh:mm
+#SBATCH --mem=34G                # memory required per node, in the form of [num][M|G|T]
+#SBATCH --nodes=1               # number of nodes to allocate, default is 1
+#SBATCH --cpus-per-task=12       # number of processor cores to be assigned for each task, default is 1, increase for multi-threaded runs
+#SBATCH --mail-user=2931382S@student.gla.ac.uk # Email address for notifications
+#SBATCH --mail-type=END         # Mail me when my jobs ends
+#SBATCH --mail-type=FAIL        # Mail me if my jobs fails
+
+############# LOADING MODULES (optional) #############
+module load apps/cellranger/7.2.0
+
+############# MY CODE #############
+
+##GTF files can contain entries for non-polyA transcripts that overlap with protein-coding gene models. 
+##These entries can cause reads to be flagged as mapped to multiple genes (multi-mapped) because of the overlapping annotations. 
+##In the case where reads are flagged as multi-mapped, they are not counted.
+##To remove these entries from the gtf, run the following command:
+#cellranger mkgtf \
+ #   /mnt/data/project0014/Reference_data/SM_V10.WSR_Smp_323380modified.gtf \
+  #  /mnt/data/project0014/Reference_data/SM_V10.WSR_Smp_323380modified.filtered.gtf \
+   # --attribute=gene_biotype:protein_coding
+    
+#cellranger mkgtf \
+ #   /mnt/data/project0014/Reference_data/SM_V10.WBPS19.canonical_geneset_WSR_Smp_323380modified.gtf \
+ #   /mnt/data/project0014/Reference_data/SM_V10.WBPS19.canonical_geneset_WSR_Smp_323380modified.filtered.gtf \
+  #  --attribute=gene_biotype:protein_coding
+
+##To make a cellranger reference, run the following command:
+cellranger mkref --genome Smansoni_genome_lncRNA --fasta /mnt/data/project0014/Reference_data/schistosoma_mansoni.PRJEA36577.WBPS19.genomic.fa --genes /mnt/data/project0014/Sreya/ncrna/cellranger/combined_annotations_files.gtf --ref-version 10
+########### Run the script like this ############
+#sbatch --cpus-per-task=12 --mem=34g /mnt/data/project0014/Frances/Scripts/make-refs_cellranger.sh
 
